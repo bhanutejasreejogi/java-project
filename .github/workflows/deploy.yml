@@ -24,9 +24,6 @@ jobs:
       - name: Build WAR
         run: mvn clean package
 
-      - name: Check WAR exists
-        run: ls -l target/
-
       - name: Clean old deployment
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -37,26 +34,25 @@ jobs:
             sudo rm -rf /opt/tomcat/webapps/onlinebookstore || true
             sudo rm -f /opt/tomcat/webapps/onlinebookstore.war || true
 
-      - name: Copy WAR to temp folder
+      - name: Deploy WAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           source: target/onlinebookstore.war
-          target: /tmp
+          target: /opt/tomcat/webapps
+          rm: true
+          strip_components: 1
 
-        
-
-      - name: Move WAR to Tomcat with sudo
+      - name: Set permissions
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo mv /tmp/onlinebookstore.war /opt/tomcat/webapps/
-            sudo chown tomcat:tomcat /opt/tomcat/webapps/onlinebookstore.war
+            sudo chown -R tomcat:tomcat /opt/tomcat/webapps/onlinebookstore.war
 
       - name: Restart Tomcat
         uses: appleboy/ssh-action@v1.0.3
@@ -67,5 +63,3 @@ jobs:
           script: |
             sudo /opt/tomcat/bin/shutdown.sh || true
             sudo /opt/tomcat/bin/startup.sh
-
-
