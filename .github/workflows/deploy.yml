@@ -42,17 +42,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: target/onlinebookstore.war
           target: /opt/tomcat/webapps
-          rm: true
-          strip_components: 1
-
-      - name: Set permissions
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            sudo chown -R tomcat:tomcat /opt/tomcat/webapps/onlinebookstore.war
 
       - name: Restart Tomcat
         uses: appleboy/ssh-action@v1.0.3
@@ -60,6 +49,10 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sudo /opt/tomcat/bin/shutdown.sh || true
+            sudo /opt/tomcat/bin/startup.sh
+
           script: |
             sudo /opt/tomcat/bin/shutdown.sh || true
             sudo /opt/tomcat/bin/startup.sh
