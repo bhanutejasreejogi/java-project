@@ -32,6 +32,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: target/onlinebookstore.war
           target: /opt/tomcat/webapps
+          strip_components: 1
 
       - name: Restart Tomcat
         uses: appleboy/ssh-action@v1.0.3
