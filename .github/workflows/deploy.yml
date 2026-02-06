@@ -24,15 +24,6 @@ jobs:
       - name: Build WAR
         run: mvn clean package
 
-      - name: Clean old deployment
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            sudo rm -rf /opt/tomcat/webapps/onlinebookstore || true
-            sudo rm -f /opt/tomcat/webapps/onlinebookstore.war || true
       - name: Deploy WAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -41,7 +32,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: target/onlinebookstore.war
           target: /opt/tomcat/webapps
-
 
       - name: Restart Tomcat
         uses: appleboy/ssh-action@v1.0.3
