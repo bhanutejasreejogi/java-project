@@ -34,11 +34,11 @@ jobs:
           target: /opt/tomcat/webapps
 
       - name: Restart Tomcat
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            sudo /opt/tomcat/bin/shutdown.sh || true
-            sudo /opt/tomcat/bin/startup.sh
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ec2-user
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+           /opt/tomcat/bin/shutdown.sh || true
+           /opt/tomcat/bin/startup.sh
