@@ -48,5 +48,5 @@ jobs:
       run: |
         aws ecs update-service \
           --cluster onlinebookstore-cluster \
-          --service onlinebookstore-service \
+          --service ci-cd-deployment-service \
           --force-new-deployment
