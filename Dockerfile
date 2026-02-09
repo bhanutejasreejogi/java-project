@@ -12,7 +12,10 @@ RUN apt-get update && \
 RUN rm -rf /opt/tomcat/webapps/*
 
 COPY target/onlinebookstore.war /opt/tomcat/webapps/ROOT.war
-COPY mariadb-java-client-3.3.3.jar /opt/tomcat/lib/
+RUN curl -L \
+ https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/3.3.3/mariadb-java-client-3.3.3.jar \
+ -o /opt/tomcat/lib/mariadb-java-client-3.3.3.jar
+
 
 EXPOSE 8080
 
