@@ -18,7 +18,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/bhanutejasreejogi/java_project'
+                git branch: 'main', url: 'https://github.com/bhanutejasreejogi/java-project'
             }
         }
 
