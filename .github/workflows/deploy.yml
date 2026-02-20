@@ -1,52 +1,52 @@
-name: Build-And-Deploy-to-ECS
+# name: Build-And-Deploy-to-ECS
 
-on:
-  push:
-    branches: [ "main" ]
+# on:
+#   push:
+#     branches: [ "main" ]
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v4
 
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: '17'
+#     - name: Setup Java
+#       uses: actions/setup-java@v4
+#       with:
+#         distribution: temurin
+#         java-version: '17'
 
-    - name: Build WAR
-      run: mvn clean package
+#     - name: Build WAR
+#       run: mvn clean package
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+#     - name: Configure AWS credentials
+#       uses: aws-actions/configure-aws-credentials@v4
+#       with:
+#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         aws-region: us-east-1
 
-    - name: Login to Amazon ECR
-      uses: aws-actions/amazon-ecr-login@v2
+#     - name: Login to Amazon ECR
+#       uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Build Docker image
-      run: |
-        docker build -t onlinebookstore .
+#     - name: Build Docker image
+#       run: |
+#         docker build -t onlinebookstore .
 
-    - name: Tag Docker image
-      run: |
-        docker tag onlinebookstore:latest \
-        ${{ secrets.ECR_REPO_URI }}:latest
+#     - name: Tag Docker image
+#       run: |
+#         docker tag onlinebookstore:latest \
+#         ${{ secrets.ECR_REPO_URI }}:latest
 
-    - name: Push Docker image
-      run: |
-        docker push ${{ secrets.ECR_REPO_URI }}:latest
+#     - name: Push Docker image
+#       run: |
+#         docker push ${{ secrets.ECR_REPO_URI }}:latest
 
-    - name: Deploy to ECS
-      run: |
-        aws ecs update-service \
-          --cluster onlinebookstore-cluster \
-          --service ci-cd-deployment-service \
-          --force-new-deployment
+#     - name: Deploy to ECS
+#       run: |
+#         aws ecs update-service \
+#           --cluster onlinebookstore-cluster \
+#           --service ci-cd-deployment-service \
+#           --force-new-deployment
