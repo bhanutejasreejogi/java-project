@@ -1,38 +1,39 @@
-
 pipeline {
     agent any
 
     tools {
-        jdk 'java17'
-        maven 'maven3'
+        jdk 'JDK17'
+        maven 'Maven3'
+    }
+
+    environment {
+        TOMCAT_IP   = "localhost"
+        TOMCAT_PORT = "8081"
+        APP_NAME    = "onlinebookstore"
+        WAR_FILE    = "target/onlinebookstore.war"
     }
 
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Code') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/bhanutejasreejogi/java-project.git',
-                    credentialsId: 'github-creds'
+                git branch: 'main', url: 'https://github.com/bhanutejasreejogi/java_project'
             }
         }
 
-        stage('Build') {
+        stage('Build using Maven') {
             steps {
                 sh 'mvn clean package'
             }
         }
 
-        stage('Deploy to Tomcat') {
+        stage('Deploy WAR to Tomcat') {
             steps {
-                deploy adapters: [
-                    tomcat9(
-                        credentialsId: 'tomcat-creds',
-                        path: '',
-                        url: 'http://98.84.31.69/:8080'
-                    )
-                ],
-                contextPath: 'myapp',
-                war: 'target/*.war'
+                sh """
+                curl -v -u admin:admin123 \
+                -T ${WAR_FILE} \
+                "http://${TOMCAT_IP}:${TOMCAT_PORT}/manager/text/deploy?path=/${APP_NAME}&update=true"
+                """
             }
         }
     }
